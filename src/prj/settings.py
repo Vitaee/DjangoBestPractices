@@ -11,10 +11,11 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
-import os, socket
+import os, socket, sys
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-
+APPLICATIONS_DIR = BASE_DIR / "applications"
+sys.path.append(str(APPLICATIONS_DIR))
 
 
 SECRET_KEY = os.environ.get("SECRET_KEY", "secret_key")
@@ -44,11 +45,12 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
         
     "django_filters",
-    "django_extensions",
     "django_redis",
 
     "celery",
-    "corsheaders"
+    "corsheaders",
+
+    "core"
 ]
 
 MIDDLEWARE = [

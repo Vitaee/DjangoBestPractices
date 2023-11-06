@@ -8,9 +8,9 @@ import psycopg2
 
 try:
     psycopg2.connect(
-        dbname="arabanagelsin_db",
-        user="arabanagelsin",
-        password="arabanagelsin123",
+        dbname="newdjango_db",
+        user="newdjango",
+        password="newdjango123",
         host="db",
         port="5432",
     )

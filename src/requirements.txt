@@ -9,7 +9,7 @@ pillow
 geopy
 djangorestframework
 coreapi
-psycopg
+psycopg2
 Faker
 django-rest-auth
 django-cors-headers
