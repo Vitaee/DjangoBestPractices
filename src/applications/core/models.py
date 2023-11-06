@@ -1,6 +1,6 @@
 from django.contrib.gis.db import models
+from simple_history.models import HistoricalRecords
 
-# Create your models here.
 
 class Magaza(models.Model):
     ad = models.CharField(verbose_name="Mağaza Adı", null=True, blank=True, max_length=125)
@@ -8,4 +8,6 @@ class Magaza(models.Model):
     boylam = models.FloatField(verbose_name="Mağaza Boylam", null=True, blank=True)
     logo = models.TextField(verbose_name="Mağaza Logo", null=True, blank=True, max_length=455)
     location = models.PointField(verbose_name="Mağaza Konumu", null=True, blank=True)
+    history = HistoricalRecords()
+
 

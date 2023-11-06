@@ -26,3 +26,4 @@ wheel
 pyjwt
 aiohttp
 asyncio
+django-simple-history
