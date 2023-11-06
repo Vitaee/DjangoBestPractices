@@ -163,3 +163,5 @@ src/static_files
 .envs/.env.test
 .envs/.env.prod
 .envs/.postgres
+
+django-env

@@ -1,0 +1,32 @@
+name: Deploy to Ubuntu Server
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: "test" # ${{ secrets.SSH_PRIVATE_KEY }}
+
+    - name: SSH into Remote Server
+      run: |
+        ssh -o StrictHostKeyChecking=no -i test user@your-remote-server-ip-address "cd /path/to/your/project && git pull"
+
+    - name: Docker Compose Down
+      run: |
+        ssh -o StrictHostKeyChecking=no -i test user@your-remote-server-ip-address "cd /path/to/your/project && docker-compose down"
+
+    - name: Docker Compose Up
+      run: |
+        ssh -o StrictHostKeyChecking=no -i test user@your-remote-server-ip-address "cd /path/to/your/project && docker-compose up -d"
