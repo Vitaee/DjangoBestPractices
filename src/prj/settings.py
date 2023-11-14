@@ -218,3 +218,17 @@ if DEBUG == 1:
     INTERNAL_IPS += [ip[:-1] + "1" for ip in ips]
 
     SHELL_PLUS_PRINT_SQL = True
+    
+import platform
+
+WINDOWS = platform.system() == "Windows"
+
+if WINDOWS:
+    # the below needs to change for linux
+    GDAL_LIBRARY_PATH = r'C:\OSGeo4W\bin\gdal303.dll'
+    GEOS_LIBRARY_PATH = r'C:\OSGeo4W\bin\geos_c.dll'
+    OSGEO4W = r"C:\OSGeo4W"
+    os.environ['OSGEO4W_ROOT'] = OSGEO4W
+    os.environ['GDAL_DATA'] = "C:\Program Files\GDAL\gdal-data"  # OSGEO4W + r"\share\gdal"
+    os.environ['PROJ_LIB'] = OSGEO4W + r"\share\proj"
+    os.environ['PATH'] = OSGEO4W + r"\bin;" + os.environ['PATH']
