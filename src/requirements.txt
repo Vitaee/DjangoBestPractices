@@ -1,4 +1,4 @@
-django==4.2.6
+django==5.1.1
 celery
 gunicorn
 uvicorn
@@ -27,3 +27,5 @@ pyjwt
 aiohttp
 asyncio
 django-simple-history
+python-dotenv
+influxdb-client

@@ -11,18 +11,26 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from dotenv import load_dotenv
 import os, socket, sys
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 APPLICATIONS_DIR = BASE_DIR / "applications"
 sys.path.append(str(APPLICATIONS_DIR))
 
 
+dotenv_path = BASE_DIR.parent / ".envs" / ".env.local"
+
+load_dotenv(dotenv_path = dotenv_path)
+
+
+
 SECRET_KEY = os.environ.get("SECRET_KEY", "secret_key")
 DEBUG = TEMPLATE_DEBUG = int(os.environ.get("DEBUG", default=0))
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "*").split(" ")
-CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "*").split(" ")
+CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS", "http://127.0.0.1:8000").split(" ")
 
 
 hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
@@ -94,11 +102,11 @@ WSGI_APPLICATION = 'prj.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.contrib.gis.db.backends.postgis",
-        "NAME": os.environ.get("DB_NAME"),
-        "USER": os.environ.get("DB_USER"),
-        "PASSWORD": os.environ.get("DB_PASSWORD"),
-        "HOST": os.environ.get("DB_HOST"),
-        "PORT": os.environ.get("DB_PORT"),
+        "NAME": os.environ.get("DB_NAME", "db"),
+        "USER": os.environ.get("DB_USER", "dbuser"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "123*"),
+        "HOST": os.environ.get("DB_HOST", "localhost"),
+        "PORT": os.environ.get("DB_PORT", "5432"),
     }
 }
 
@@ -154,7 +162,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://:yv2U*cMqK*Nehphn*meZBqK4Pbpyxr9LLfmLM28Cd)re2aQ@redis:6379/5",
+        "LOCATION": f"redis://:{os.environ.get('REDIS_PASSWORD', '')}@{os.environ.get('REDIS_HOST', 'localhost')}:{os.environ.get('REDIS_PORT', '6379')}/5",
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient"
         },
@@ -166,6 +174,17 @@ CACHE_TTL = 60 * 60 * 3
 
 CACHE_MIDDLEWARE_ALIAS = "default" 
 
+import influxdb_client
+from influxdb_client import InfluxDBClient, Point, WritePrecision
+from influxdb_client.client.write_api import SYNCHRONOUS
+
+token = os.environ.get("INFLUXDB_TOKEN")
+org = os.environ.get("INFLUXDB_ORG")
+url = os.environ.get("INFLUXDB_URL")
+
+write_client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
+
+
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
@@ -176,19 +195,16 @@ LOGGING = {
         }
     },
     "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "verbose",
+        "influxdb": {
+            "class": "prj.logging.InfluxDBHandler",
+            "level": "DEBUG",
+            "client": influxdb_client,
         },
-    },
-    "root": {
-        "handlers": ["console"],
-        "level": "DEBUG",
     },
     "loggers": {
         "django": {
-            "handlers": ["console"],
-            "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+            "handlers": ["influxdb"],
+            "level": "DEBUG",
             "propagate": False,
         },
     },
