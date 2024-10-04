@@ -10,3 +10,5 @@ This project uses below techs & libraries to enchance performance and rapid deve
 - Logging
 - ASGI and Async ORM operations
 - Realworld project structure.
+
+uvicorn prj.asgi:application --reload
