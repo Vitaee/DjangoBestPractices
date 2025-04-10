@@ -26,6 +26,7 @@ services:
     restart: unless-stopped
     depends_on:
       - db
+      - redis
     volumes:
       - ./src:/home/app
       - ./src/media:/home/app/media

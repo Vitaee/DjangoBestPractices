@@ -174,45 +174,20 @@ CACHE_TTL = 60 * 60 * 3
 
 CACHE_MIDDLEWARE_ALIAS = "default" 
 
-import influxdb_client
-from influxdb_client import InfluxDBClient, Point, WritePrecision
-from influxdb_client.client.write_api import SYNCHRONOUS
-
-token = os.environ.get("INFLUXDB_TOKEN")
-org = os.environ.get("INFLUXDB_ORG")
-url = os.environ.get("INFLUXDB_URL")
-
-write_client = influxdb_client.InfluxDBClient(url=url, token=token, org=org)
-
-
-LOGGING = {
-    "version": 1,
-    "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "{levelname} {asctime} {module} {process:d} {thread:d} {message}",
-            "style": "{",
-        }
-    },
-    "handlers": {
-        "influxdb": {
-            "class": "prj.logging.InfluxDBHandler",
-            "level": "DEBUG",
-            "client": influxdb_client,
-        },
-    },
-    "loggers": {
-        "django": {
-            "handlers": ["influxdb"],
-            "level": "DEBUG",
-            "propagate": False,
-        },
-    },
-}
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+    "DEFAULT_FILTER_BACKENDS": [
+        "django_filters.rest_framework.DjangoFilterBackend"
+    ],
 }
 
 
